@@ -1,12 +1,10 @@
-import enum
 import uuid
-
-from .cell_state import CellState
 
 
 class Cell:
-    def __init__(self, column):
+    def __init__(self, column, coord):
         self.column = column
+        self.coord = coord
         self.id = uuid.uuid4().int
         self.distal_segments = []
         self.apical_segments = []

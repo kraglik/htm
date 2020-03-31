@@ -1,4 +1,4 @@
-import math
+import numpy as np
 import uuid
 from functools import reduce
 import random
@@ -70,9 +70,18 @@ class Region:
         self.id = uuid.uuid4().int
         self.config = config
 
-        n_columns = reduce(lambda a, b: a * b, config.shape, 1)
+        self.columns = []
 
-        self.columns = [Column(config.cells_per_column) for _ in range(n_columns)]
+        for row in range(self.config.shape[0]):
+            for col in range(self.config.shape[1]):
+                self.columns.append(
+                    Column(
+                        coord=(row, col),
+                        n_cells=config.cells_per_column,
+                        region=self
+                    )
+                )
+
         self.cells_ids = set()
         self.cells = dict()
         self.active_columns = []
@@ -245,3 +254,14 @@ class Region:
                 minimal = column.overlap_duty_cycle
 
         return minimal
+
+    @property
+    def sdr(self):
+        shape = (self.config.shape[0], self.config.shape[1], self.config.cells_per_column)
+
+        sdr = np.ndarray(shape, dtype=np.bool)
+
+        for cell in self.cells.values():
+            sdr[cell.coord] = cell.active
+
+        return sdr

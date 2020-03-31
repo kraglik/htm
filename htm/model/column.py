@@ -6,9 +6,11 @@ from htm.model.cell_state import CellState
 
 
 class Column:
-    def __init__(self, n_cells):
+    def __init__(self, region, coord, n_cells):
+        self.region = region
+        self.coord = coord
         self.id = uuid.uuid4().int
-        self.cells = [Cell(self) for _ in range(n_cells)]
+        self.cells = [Cell(self, (coord[0], coord[1], i)) for i in range(n_cells)]
         self.cells_ids = [cell.id for cell in self.cells]
         self.active = False
         self.predicted = False
